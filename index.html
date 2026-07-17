@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>📚 Study Portal – All Batches</title>
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: #f1f5f9;
+            padding: 24px;
+            color: #0f172a;
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* ---------- HEADER ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .badge {
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .header-actions input {
+            padding: 10px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 15px;
+            width: 260px;
+            transition: 0.2s;
+        }
+        .header-actions input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+        .header-actions .btn-refresh {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .header-actions .btn-refresh:hover {
+            background: #1d4ed8;
+        }
+
+        /* ---------- BATCH CARDS ---------- */
+        .batch {
+            background: white;
+            border-radius: 16px;
+            padding: 18px 22px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+        .batch:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            border-color: #b9d0f0;
+        }
+        .batch-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .batch-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .batch-meta {
+            font-size: 13px;
+            color: #475569;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+        .batch-meta .free {
+            color: #16a34a;
+            font-weight: 600;
+        }
+        .batch-meta .paid {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        .batch-expand {
+            font-size: 20px;
+            color: #94a3b8;
+            transition: 0.2s;
+        }
+        .batch-expand.open {
+            transform: rotate(180deg);
+        }
+
+        /* ---------- SUBJECTS ---------- */
+        .subjects-container {
+            margin-top: 16px;
+            padding-left: 8px;
+            display: none;
+        }
+        .subjects-container.open {
+            display: block;
+        }
+        .subject {
+            border-left: 3px solid #2563eb;
+            padding-left: 18px;
+            margin: 14px 0;
+        }
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        .subject-header h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+        .subject-header .lec-count {
+            font-size: 13px;
+            color: #64748b;
+        }
+        .subject-header .expand-sub {
+            font-size: 16px;
+            color: #94a3b8;
+        }
+
+        /* ---------- TOPICS / LECTURES ---------- */
+        .topics-container {
+            margin-top: 10px;
+            padding-left: 8px;
+            display: none;
+        }
+        .topics-container.open {
+            display: block;
+        }
+        .topic {
+            margin: 10px 0;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .topic-header h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+        .topic-header .vid-count {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* ---------- LECTURE ITEMS ---------- */
+        .lectures-list {
+            margin-top: 8px;
+            padding-left: 12px;
+            display: none;
+        }
+        .lectures-list.open {
+            display: block;
+        }
+        .lecture-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 14px;
+            margin: 4px 0;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: 0.2s;
+        }
+        .lecture-item:hover {
+            border-color: #b9d0f0;
+        }
+        .lecture-name {
+            font-size: 14px;
+            flex: 1 1 200px;
+        }
+        .lecture-name .lock {
+            margin-left: 6px;
+            font-size: 12px;
+        }
+        .lecture-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .lecture-actions a,
+        .lecture-actions button {
+            padding: 4px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-watch {
+            background: #2563eb;
+            color: white;
+        }
+        .btn-watch:hover {
+            background: #1d4ed8;
+        }
+        .btn-notes {
+            background: #10b981;
+            color: white;
+        }
+        .btn-notes:hover {
+            background: #059669;
+        }
+        .btn-dpp {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn-dpp:hover {
+            background: #d97706;
+        }
+        .btn-solution {
+            background: #8b5cf6;
+            color: white;
+        }
+        .btn-solution:hover {
+            background: #7c3aed;
+        }
+        .btn-disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        /* ---------- LOADING & ERRORS ---------- */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+        .error {
+            color: #dc2626;
+            padding: 12px;
+            background: #fef2f2;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+        .no-data {
+            color: #64748b;
+            padding: 12px;
+            font-style: italic;
+        }
+
+        /* ---------- FOOTER ---------- */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 13px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 640px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-actions input {
+                width: 100%;
+            }
+            .lecture-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lecture-actions {
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="app">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                📚 Study Portal
+                <span class="badge" id="batchCount">0</span>
+            </h1>
+            <div class="header-actions">
+                <input type="text" id="searchInput" placeholder="Search batches..." />
+                <button class="btn-refresh" id="refreshBtn">⟳ Refresh</button>
+            </div>
+        </div>
+
+        <!-- Batch List -->
+        <div id="batchList">
+            <div class="loading">Loading batches...</div>
+        </div>
+
+        <div class="footer">
+            Powered by pwthor.live • Data updates automatically
+        </div>
+    </div>
+
+    <script>
+        // ================================================================
+        // CONFIGURATION
+        // ================================================================
+        // Your auth_token – paste here or set via environment variable
+        const AUTH_TOKEN = 'YOUR_AUTH_TOKEN_HERE'; // <-- REPLACE THIS
+
+        // The proxy endpoint (Vercel serverless function)
+        const PROXY_URL = '/api/proxy';
+
+        // Batch data source
+        const BATCHES_URL = 'https://raw.githubusercontent.com/nobodyknows23/batches/main/batches.json';
+
+        // ================================================================
+        // STATE
+        // ================================================================
+        let allBatches = [];
+        let filteredBatches = [];
+        let isLoading = false;
+
+        // ================================================================
+        // DOM REFS
+        // ================================================================
+        const batchListEl = document.getElementById('batchList');
+        const searchInput = document.getElementById('searchInput');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const batchCountEl = document.getElementById('batchCount');
+
+        // ================================================================
+        // API HELPER (uses proxy)
+        // ================================================================
+        async function apiFetch(url) {
+            const response = await fetch(PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    url: url,
+                    authToken: AUTH_TOKEN
+                })
+            });
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(`API error ${response.status}: ${text}`);
+            }
+            return await response.json();
+        }
+
+        // ================================================================
+        // LOAD BATCHES
+        // ================================================================
+        async function loadBatches() {
+            try {
+                const res = await fetch(BATCHES_URL);
+                if (!res.ok) throw new Error('Failed to fetch batches.json');
+                const data = await res.json();
+                allBatches = data.data || data || [];
+                filteredBatches = [...allBatches];
+                batchCountEl.textContent = allBatches.length;
+                renderBatches(filteredBatches);
+            } catch (err) {
+                batchListEl.innerHTML = `<div class="error">❌ Failed to load batches: ${err.message}</div>`;
+            }
+        }
+
+        // ================================================================
+        // RENDER BATCHES
+        // ================================================================
+        function renderBatches(batches) {
+            if (!batches || batches.length === 0) {
+                batchListEl.innerHTML = '<div class="loading">No batches match your search.</div>';
+                return;
+            }
+
+            let html = '';
+            batches.forEach(b => {
+                const price = parseInt(b.amount) || 0;
+                const priceLabel = price === 0 ?
+                    '<span class="free">FREE</span>' :
+                    `<span class="paid">₹${price}</span>`;
+                const exam = b.exam ? (Array.isArray(b.exam) ? b.exam.join(', ') : b.exam) : 'N/A';
+
+                html += `
+                    <div class="batch" data-batchid="${b.batch_id}">
+                        <div class="batch-header">
+                            <h2>${b.name}</h2>
+                            <div class="batch-meta">
+                                <span>${exam}</span>
+                                <span>${b.language || 'N/A'}</span>
+                                <span>${priceLabel}</span>
+                            </div>
+                            <span class="batch-expand">▼</span>
+                        </div>
+                        <div class="subjects-container" data-loaded="false">
+                            <div class="loading">Loading subjects...</div>
+                        </div>
+                    </div>
+                `;
+            });
+            batchListEl.innerHTML = html;
+
+            // Attach click events to batches
+            document.querySelectorAll('.batch').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    const container = this.querySelector('.subjects-container');
+                    const expand = this.querySelector('.batch-expand');
+                    if (container.classList.contains('open')) {
+                        container.classList.remove('open');
+                        expand.textContent = '▼';
+                    } else {
+                        container.classList.add('open');
+                        expand.textContent = '▲';
+                        if (container.dataset.loaded === 'false') {
+                            const batchId = this.dataset.batchid;
+                            loadSubjects(batchId, container);
+                            container.dataset.loaded = 'true';
+                        }
+                    }
+                });
+            });
+        }
+
+        // ================================================================
+        // LOAD SUBJECTS
+        // ================================================================
+        async function loadSubjects(batchId, container) {
+            try {
+                const url = `https://pwthor.live/api/BatchInfo?BatchId=${batchId}&Type=details`;
+                const data = await apiFetch(url);
+                const subjects = data.data?.subjects || [];
+
+                if (subjects.length === 0) {
+                    container.innerHTML = '<div class="no-data">No subjects found.</div>';
+                    return;
+                }
+
+                let html = '';
+                subjects.forEach(sub => {
+                    const subjectId = sub.subjectId || sub._id || sub.id;
+                    const name = sub.subject || sub.name || 'Unnamed';
+                    html += `
+                        <div class="subject" data-subjectid="${subjectId}" data-batchid="${batchId}">
+                            <div class="subject-header">
+                                <h3>${name}</h3>
+                                <span class="expand-sub">▶</span>
+                            </div>
+                            <div class="topics-container" data-loaded="false">
+                                <div class="loading">Loading topics...</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+                // Attach subject click events
+                container.querySelectorAll('.subject').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const topicsContainer = this.querySelector('.topics-container');
+                        const expand = this.querySelector('.expand-sub');
+                        if (topicsContainer.classList.contains('open')) {
+                            topicsContainer.classList.remove('open');
+                            expand.textContent = '▶';
+                        } else {
+                            topicsContainer.classList.add('open');
+                            expand.textContent = '▼';
+                            if (topicsContainer.dataset.loaded === 'false') {
+                                const batchId = this.dataset.batchid;
+                                const subjectId = this.dataset.subjectid;
+                                loadTopics(batchId, subjectId, topicsContainer);
+                                topicsContainer.dataset.loaded = 'true';
+                            }
+                        }
+                    });
+                });
+
+            } catch (err) {
+                container.innerHTML = `<div class="error">Error loading subjects: ${err.message}</div>`;
+            }
+        }
+
+        // ================================================================
+        // LOAD TOPICS
+        // ================================================================
+        async function loadTopics(batchId, subjectId, container) {
+            try {
+                const url = `https://pwthor.live/api/SubjectInfo?BatchId=${batchId}&SubjectId=${subjectId}&page=1`;
+                const data = await apiFetch(url);
+                const topics = data.data || [];
+
+                if (topics.length === 0) {
+                    container.innerHTML = '<div class="no-data">No topics found.</div>';
+                    return;
+                }
+
+                let html = '';
+                for (const topic of topics) {
+                    const topicId = topic._id || topic.tagId || topic.slug;
+                    const name = topic.name || 'Unnamed';
+                    // Count videos from the topic metadata
+                    const vidCount = topic.videos || topic.lectureVideos || 0;
+                    html += `
+                        <div class="topic" data-topicid="${topicId}" data-batchid="${batchId}" data-subjectid="${subjectId}">
+                            <div class="topic-header">
+                                <h4>${name} <span class="vid-count">(${vidCount} videos)</span></h4>
+                                <span class="expand-topic">▶</span>
+                            </div>
+                            <div class="lectures-list" data-loaded="false">
+                                <div class="loading">Loading lectures...</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+
+                // Attach topic click events
+                container.querySelectorAll('.topic').forEach(el => {
+                    el.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const lecList = this.querySelector('.lectures-list');
+                        const expand = this.querySelector('.expand-topic');
+                        if (lecList.classList.contains('open')) {
+                            lecList.classList.remove('open');
+                            expand.textContent = '▶';
+                        } else {
+                            lecList.classList.add('open');
+                            expand.textContent = '▼';
+                            if (lecList.dataset.loaded === 'false') {
+                                const batchId = this.dataset.batchid;
+                                const subjectId = this.dataset.subjectid;
+                                const topicId = this.dataset.topicid;
+                                loadLectures(batchId, subjectId, topicId, lecList);
+                                lecList.dataset.loaded = 'true';
+                            }
+                        }
+                    });
+                });
+
+            } catch (err) {
+                container.innerHTML = `<div class="error">Error loading topics: ${err.message}</div>`;
+            }
+        }
+
+        // ================================================================
+        // LOAD LECTURES
+        // ================================================================
+        async function loadLectures(batchId, subjectId, topicId, container) {
+            try {
+                const url =
+                    `https://pwthor.live/api/TopicInfo?BatchId=${batchId}&SubjectId=${subjectId}&TopicId=${topicId}&ContentType=videos&page=1`;
+                const data = await apiFetch(url);
+                const lectures = data.data || [];
+
+                if (lectures.length === 0) {
+                    container.innerHTML = '<div class="no-data">No lectures found.</div>';
+                    return;
+                }
+
+                let html = '';
+                lectures.forEach(lec => {
+                    const childId = lec._id || lec.ChildId;
+                    const name = lec.topic || lec.name || 'Lecture';
+                    const isLocked = lec.isLocked !== undefined ? lec.isLocked : false;
+                    const watchUrl =
+                        `https://pwthor.live/watch?batchId=${batchId}&SubjectId=${subjectId}&ChildId=${childId}&Type=penpencilvdo&VideoUrl=&isLocked=${isLocked}`;
+
+                    // Check for attachments (notes, dpp, solutions)
+                    // In the API response, there might be `hasAttachment`, `attachments`, `files`, etc.
+                    // We'll check for any field that looks like a file URL.
+                    let notesUrl = null;
+                    let dppUrl = null;
+                    let solutionUrl = null;
+
+                    // Example: if lec has an 'attachments' array
+                    if (lec.attachments && Array.isArray(lec.attachments)) {
+                        lec.attachments.forEach(att => {
+                            if (att.type === 'notes' || att.name?.toLowerCase().includes('note')) {
+                                notesUrl = att.url || att.fileUrl;
+                            } else if (att.type === 'dpp' || att.name?.toLowerCase().includes('dpp')) {
+                                dppUrl = att.url || att.fileUrl;
+                            } else if (att.type === 'solution' || att.name?.toLowerCase().includes('solution')) {
+                                solutionUrl = att.url || att.fileUrl;
+                            }
+                        });
+                    }
+
+                    // Also check for direct fields
+                    if (!notesUrl && lec.notes) notesUrl = lec.notes;
+                    if (!dppUrl && lec.dpp) dppUrl = lec.dpp;
+                    if (!solutionUrl && lec.solution) solutionUrl = lec.solution;
+
+                    // If there's a `videoDetails` maybe contains files? Not in our sample.
+
+                    html += `
+                        <div class="lecture-item">
+                            <span class="lecture-name">
+                                ${name}
+                                ${isLocked ? '<span class="lock">🔒</span>' : ''}
+                            </span>
+                            <div class="lecture-actions">
+                                <a href="${watchUrl}" target="_blank" class="btn-watch">▶ Watch</a>
+                                ${notesUrl ? `<a href="${notesUrl}" target="_blank" class="btn-notes">📄 Notes</a>` : ''}
+                                ${dppUrl ? `<a href="${dppUrl}" target="_blank" class="btn-dpp">📝 DPP</a>` : ''}
+                                ${solutionUrl ? `<a href="${solutionUrl}" target="_blank" class="btn-solution">✅ Solution</a>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+
+            } catch (err) {
+                container.innerHTML = `<div class="error">Error loading lectures: ${err.message}</div>`;
+            }
+        }
+
+        // ================================================================
+        // SEARCH
+        // ================================================================
+        searchInput.addEventListener('input', function() {
+            const q = this.value.toLowerCase().trim();
+            if (!q) {
+                filteredBatches = [...allBatches];
+            } else {
+                filteredBatches = allBatches.filter(b =>
+                    b.name.toLowerCase().includes(q) ||
+                    (b.byName && b.byName.toLowerCase().includes(q)) ||
+                    (b.exam && (Array.isArray(b.exam) ? b.exam.join(' ').toLowerCase() : b.exam.toLowerCase()).includes(q))
+                );
+            }
+            renderBatches(filteredBatches);
+        });
+
+        // ================================================================
+        // REFRESH
+        // ================================================================
+        refreshBtn.addEventListener('click', function() {
+            // Reset all opened containers (optional)
+            document.querySelectorAll('.subjects-container.open, .topics-container.open, .lectures-list.open').forEach(el =>
+                el.classList.remove('open')
+            );
+            // Reload batches
+            loadBatches();
+        });
+
+        // ================================================================
+        // INIT
+        // ================================================================
+        loadBatches();
+    </script>
+
+</body>
+</html>
